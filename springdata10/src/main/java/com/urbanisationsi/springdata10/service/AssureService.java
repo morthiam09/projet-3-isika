@@ -1,54 +1,90 @@
 package com.urbanisationsi.springdata10.service;
 
+import com.urbanisationsi.springdata10.dao.AssureRepository;
+import com.urbanisationsi.springdata10.modele.Assure;
+import com.urbanisationsi.springdata10.modele.Personne;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Service;
 
-import com.urbanisationsi.springdata10.dao.AssureRepository;
-import com.urbanisationsi.springdata10.modele.Assure;
-
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.List;
 
-import org.slf4j.Logger; // SLF4J : Simple Logging Facade for Java. C'est une interface de logging qui permet de choisir un framework de logging à l'exécution (par exemple log4j, logback, java.util.logging, etc.). il permet de faire du logging de manière simple et de changer de framework de logging sans changer le code.
-import org.slf4j.LoggerFactory;
+@Service
+public class AssureService implements ApplicationRunner {
 
-@Service // cette classe est un bean Spring, c'est-à-dire un objet géré par Spring
-public class AssureService implements ApplicationRunner{
-
-    @Autowired // injection de dépendance : Spring va automatiquement instancier un objet de type AssureRepository et l'injecter dans cette propriété
+    @Autowired
     private AssureRepository assureRepository;
 
-    private Logger log = LoggerFactory.getLogger(AssureService.class); // SLF4J : LoggerFactory est une classe qui permet de créer des instances de Logger. getLogger est une méthode statique de LoggerFactory qui permet de créer une instance de Logger pour une classe donnée. Cette instance de Logger est utilisée pour faire du logging.
+    private static final Logger log = LoggerFactory.getLogger(AssureService.class);
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        List<Assure> assures = List.of(
+            createAssure(1000L, "Martin", "Marie", LocalDate.of(2000, Month.MARCH, 29), 2000L, "Dossier médical de Marie Martin"),
+            createAssure(1001L, "Durand", "Paul", LocalDate.of(1995, Month.JULY, 15), 2001L, "Dossier médical de Paul Durand"),
+            createAssure(1002L, "Leroy", "Sophie", LocalDate.of(1988, Month.DECEMBER, 5), 2002L, "Dossier médical de Sophie Leroy")
+        );
 
-        Assure a1 = new Assure();
-        a1.setNumeroPersonne(1000L);
-        a1.setNom("Martin");
-        a1.setPrenom("Marie");
-        a1.setDateNaissance(LocalDate.of(2000, Month.MARCH, 29));
+        // nous allons verifier si les données sont valides avant de les sauvegarder
+        assures.forEach(assure -> { 
+            if (validateAssure(assure)) {
+                assureRepository.save(assure);
+                log.info("Assuré sauvegardé : {}", assure);
+            } else {
+                log.error("Données invalides pour l'assuré : {}", assure);
+            }
+        });
 
-        Assure a2 = new Assure();
-        a2.setNumeroPersonne(1001L);
-        a2.setNom("Durand");
-        a2.setPrenom("Paul");
-        a2.setDateNaissance(LocalDate.of(1995, Month.JULY, 15));
+        List<Assure> allAssures = (List<Assure>) assureRepository.findAll(); // findAll() est une méthode de CrudRepository qui retourne la liste de toutes les entités de la table correspondante
+        log.info("Liste des assurés : {}", allAssures);
 
-        Assure a3 = new Assure();
-        a3.setNumeroPersonne(1002L);
-        a3.setNom("Leroy");
-        a3.setPrenom("Sophie");
-        a3.setDateNaissance(LocalDate.of(1988, Month.DECEMBER, 5));
+        Assure foundAssure = assureRepository.findByNumeroPersonne(1002L);
+        log.info("Assuré trouvé avec numéro personne 1002 : {}", foundAssure);
 
-        assureRepository.save(a1);
-        assureRepository.save(a2);  
-        //assureRepository.save(a3);
+        List<Assure> foundAssures = assureRepository.findByNomAndPrenom("Martin", "Marie");
+        log.info("Assurés trouvés avec nom Martin et prénom Marie : {}", foundAssures);
 
-        log.info("Liste des assurés :", assureRepository.findAll());
+        Personne foundPersonne = assureRepository.findByDateNaissance(LocalDate.of(1995, Month.JULY, 15));
+        log.info("Personne trouvée avec date de naissance 1995-07-15 : {}", foundPersonne);
 
+        Personne foundPersonne2 = assureRepository.findByDossierMedical("Dossier médical de Sophie Leroy");
+        log.info("Personne trouvée avec dossier médical Dossier médical de Sophie Leroy : {}", foundPersonne2);
     }
 
+    private Assure createAssure(Long numeroPersonne, String nom, String prenom, LocalDate dateNaissance, Long numeroAssure, String dossierMedical) {
+
+        Assure assure = new Assure();
+        assure.setNumeroPersonne(numeroPersonne);
+        assure.setNom(nom);
+        assure.setPrenom(prenom);
+        assure.setDateNaissance(dateNaissance);
+        assure.setNumeroAssure(numeroAssure);
+        assure.setDossierMedical(dossierMedical);
+        return assure;
+    }
+
+    private boolean validateAssure(Assure assure) {
+        if (assure == null) {
+            return false;
+        }
+        if (assure.getNumeroPersonne() == null || assure.getNumeroPersonne() <= 0) {
+            return false;
+        }
+        if (assure.getNom() == null || assure.getNom().trim().isEmpty()) {
+            return false;
+        }
+        if (assure.getPrenom() == null || assure.getPrenom().trim().isEmpty()) {
+            return false;
+        }
+        if (assure.getDateNaissance() == null) {
+            return false;
+        }
+        return true;
+    }
 }
