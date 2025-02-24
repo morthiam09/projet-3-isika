@@ -12,7 +12,7 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Personne {
     @Id // JPA : cette propriété est la clé primaire de la table correspondante
     @GeneratedValue(strategy = GenerationType.AUTO) // JPA : l'attribut id est auto-généré

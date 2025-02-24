@@ -41,7 +41,11 @@ public class ConseillerBancaire extends Personne{
 
     @Override
     public String toString() {
-        return "ConseillerBancaire [numeroBureau=" + numeroBureau + "]";
+        return "\nConseillerBancaire [numeroBureau=" + numeroBureau + ", getNom()=" + getNom() + ", getPrenom()="
+                + getPrenom() + ", getNumeroPersonne()=" + getNumeroPersonne() + ", getDateNaissance()="
+                + getDateNaissance() + "]\n";
     }
+
+ 
 
 }
