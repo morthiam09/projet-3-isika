@@ -1,10 +1,11 @@
 package com.urbanisationsi.springdata10.modele;
 
 
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 
-
 @Entity // JPA : cette classe est une entité, c'est-à-dire qu'elle est mappée sur une table de la base de données, et que chaque instance de cette classe correspond à une ligne de cette table. Si on avait mis component, on aurait dit que c'est un bean Spring, c'est-à-dire un objet géré par Spring, mais qui n'est pas mappé sur une table de la base de données.
+@DiscriminatorValue("1") // JPA : la valeur de la colonne TYPE_PERSONNE pour les instances de la classe Assure est 1
 public class Assure extends Personne {
     
     private Long numeroAssure;

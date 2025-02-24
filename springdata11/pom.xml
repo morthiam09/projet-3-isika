@@ -8,10 +8,10 @@
 		<version>3.4.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.urbanisationsi.springdata10</groupId>
-	<artifactId>springdata10</artifactId>
+	<groupId>com.urbanisationsi.sprindata11</groupId>
+	<artifactId>springdata11</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>springdata10</name>
+	<name>springdata11</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
@@ -55,12 +55,11 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
+			<dependency>
     		<groupId>io.github.cdimascio</groupId>
     		<artifactId>java-dotenv</artifactId>
     		<version>5.2.2</version>
 		</dependency>
-
 	</dependencies>
 
 	<build>

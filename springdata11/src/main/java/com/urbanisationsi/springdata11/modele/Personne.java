@@ -1,11 +1,9 @@
-package com.urbanisationsi.springdata10.modele;
+package com.urbanisationsi.springdata11.modele;
 
 import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import jakarta.persistence.DiscriminatorColumn;
-import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,7 +13,6 @@ import jakarta.persistence.InheritanceType;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "TYPE_PERSONNE", discriminatorType = DiscriminatorType.INTEGER)
 public class Personne {
     @Id // JPA : cette propriété est la clé primaire de la table correspondante
     @GeneratedValue(strategy = GenerationType.AUTO) // JPA : l'attribut id est auto-généré

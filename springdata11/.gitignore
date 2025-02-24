@@ -33,4 +33,4 @@ build/
 .vscode/
 
 ### ignorer les fichiers de configuration de l'environnement ###
-.env 
+.env
