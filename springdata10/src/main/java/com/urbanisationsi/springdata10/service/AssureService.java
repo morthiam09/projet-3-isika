@@ -1,4 +1,5 @@
 package com.urbanisationsi.springdata10.service;
+import java.util.List;
 
 import com.urbanisationsi.springdata10.dao.AssureRepository;
 import com.urbanisationsi.springdata10.dao.ConseillerBancaireRepository;
@@ -58,39 +59,59 @@ public class AssureService implements ApplicationRunner {
             }
         });
 
+        // rechercher tous les assurés
         List<Assure> allAssures = (List<Assure>) assureRepository.findAll(); // findAll() est une méthode de CrudRepository qui retourne la liste de toutes les entités de la table correspondante
         log.info("Liste des assurés : {}", allAssures);
 
+        // rechercher par numéro personne
         List<Assure> foundAssure = assureRepository.findByNumeroPersonne(1002L);
         log.info("Assuré trouvé avec numéro personne 1002 : {}", foundAssure);
 
+        // rechercher par nom et prénom
         List<Assure> foundAssures = assureRepository.findByNomAndPrenom("Martin", "Marie");
         log.info("Assurés trouvés avec nom Martin et prénom Marie : {}", foundAssures);
 
-        Personne foundPersonne = assureRepository.findByDateNaissance(LocalDate.of(1995, Month.JULY, 15));
+        // rechercher par date de naissance
+        List<Assure> foundPersonne = assureRepository.findByDateNaissance(LocalDate.of(1995, Month.JULY, 15));
         log.info("Personne trouvée avec date de naissance 1995-07-15 : {}", foundPersonne);
 
-        Personne foundPersonne2 = assureRepository.findByDossierMedical("Dossier médical de Sophie Leroy");
+        // rechercher par un dossier médical
+        List<Assure> foundPersonne2 = assureRepository.findByDossierMedical("Dossier médical de Sophie Leroy");
         log.info("Personne trouvée avec dossier médical Dossier médical de Sophie Leroy : {}", foundPersonne2);
 
+        // rechercher par un nom ou un prénom
         ConseillerBancaire foundConseiller = conseillerBancaireRepository.findByNomOrPrenom("Dupont", "Jean");
         log.info("Conseiller trouvé avec nom Dupont ou prénom Jean : {}", foundConseiller);
 
+        // rechercher par un numéro de bureau
         ConseillerBancaire foundConseiller2 = conseillerBancaireRepository.findByNumeroBureau(1001L);
         log.info("Conseiller trouvé avec numéro de bureau 1001 : {}", foundConseiller2);
+
+        // rechercher par un nom contenant un chain de caractère
+        List<Assure> foundAssuresByNom = assureRepository.findByNomContaining("Martin");
+        log.info("Assurés trouvés avec nom contenant Martin : {}", foundAssuresByNom);
+
+        // rechercher par une date de naissance avant une date donnée
+        List<Assure> foundAssuresByDate = assureRepository.findByDateNaissanceBefore(LocalDate.of(1990, Month.JANUARY, 1)); 
+        log.info("Assurés trouvés avec date de naissance avant 1995-01-01 : {}", foundAssuresByDate);
 
     }
 
     private Assure createAssure(Long numeroPersonne, String nom, String prenom, LocalDate dateNaissance, Long numeroAssure, String dossierMedical) {
 
-        Assure assure = new Assure();
-        assure.setNumeroPersonne(numeroPersonne);
-        assure.setNom(nom);
-        assure.setPrenom(prenom);
-        assure.setDateNaissance(dateNaissance);
-        assure.setNumeroAssure(numeroAssure);
-        assure.setDossierMedical(dossierMedical);
-        return assure;
+        if (assureRepository.findByNumeroPersonne(numeroPersonne) == null) {
+            log.error("Assuré avec le numéro de personne {} existe déjà", numeroPersonne);
+            return null;
+        } else {
+            Assure assure = new Assure();
+            assure.setNumeroPersonne(numeroPersonne);
+            assure.setNom(nom);
+            assure.setPrenom(prenom);
+            assure.setDateNaissance(dateNaissance);
+            assure.setNumeroAssure(numeroAssure);
+            assure.setDossierMedical(dossierMedical);
+            return assure;
+        }
     }
 
     private boolean validateAssure(Personne personne) {
@@ -113,12 +134,17 @@ public class AssureService implements ApplicationRunner {
     }
     private ConseillerBancaire createConseillerBancaire(Long numeroPersonne, String nom, String prenom, LocalDate dateNaissance, int numeroBureau) {
 
-        ConseillerBancaire cb = new ConseillerBancaire();
-        cb.setNumeroPersonne(numeroPersonne);
-        cb.setNom(nom);
-        cb.setPrenom(prenom);
-        cb.setDateNaissance(dateNaissance);
-        cb.setNumeroBureau(numeroBureau);
-        return cb;
+        if (conseillerBancaireRepository.findByNumeroPersonne(numeroPersonne) == null) {
+            log.error("Conseiller bancaire avec le numéro de personne {} existe déjà", numeroPersonne);
+            return null;
+        } else {
+            ConseillerBancaire cb = new ConseillerBancaire();
+            cb.setNumeroPersonne(numeroPersonne);
+            cb.setNom(nom);
+            cb.setPrenom(prenom);
+            cb.setDateNaissance(dateNaissance);
+            cb.setNumeroBureau(numeroBureau);
+            return cb;
+        }
     }
 }
