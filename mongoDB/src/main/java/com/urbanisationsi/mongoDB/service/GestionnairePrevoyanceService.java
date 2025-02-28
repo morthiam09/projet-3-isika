@@ -20,8 +20,7 @@ public class GestionnairePrevoyanceService {
     private Logger log = LoggerFactory.getLogger(this.getClass()); 
  
     @Bean 
-    CommandLineRunner initialiser(GestionnairePrevoyanceRepository gpr, 
-RoleRepository rp) { 
+    CommandLineRunner initialiser(GestionnairePrevoyanceRepository gpr, RoleRepository rp) { 
  
         return args -> {  
             log.info("Initialisation des données"); 
@@ -79,5 +78,4 @@ RoleRepository rp) {
         gp.setRoles(roles);
         return gp;
     }
-
 }
